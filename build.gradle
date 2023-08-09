@@ -1,0 +1,110 @@
+buildscript {
+    repositories {
+        // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+    }
+}
+apply plugin: 'net.minecraftforge.gradle'
+//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+ext.buildnumber = 'DEV'
+if (System.getenv('BUILD_NUMBER') != null)
+    project.buildnumber = System.getenv('BUILD_NUMBER')
+else
+    logger.lifecycle "No build number detected, setting to DEV"
+
+group = "com.theprogrammingturkey.chancecubes"
+archivesBaseName = "ChanceCubes"
+version = "${mc_version}-${mod_version}.${buildnumber}"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+compileJava.options.encoding = 'UTF-8'
+
+minecraft {
+    mappings channel: 'official', version: '1.18.2'
+
+    //accessTransformer = file('my_at.cfg')
+
+    // default run configurations.
+    // these can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run-1.18')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', ''
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'info'
+
+            mods {
+                chancecubes {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run-server-1.18')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', ''
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'info'
+
+            mods {
+                chancecubes {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run-1.18')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', ''
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'info'
+
+            args '--mod', 'chancecubes', '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                chancecubes {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    maven { url 'https://maven.mcmoddev.com' }
+    maven { url 'https://www.dogforce-games.com/maven/' }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+}
+
+jar {
+    manifest {
+        attributes(["Specification-Title"     : "chance_cubes",
+                    "Specification-Vendor"    : "turkeydev",
+                    "Specification-Version"   : "1", // We are version 1 of ourselves
+                    "Implementation-Title"    : project.name,
+                    "Implementation-Version"  : "${version}",
+                    "Implementation-Vendor"   : "turkeydev",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+    }
+}
