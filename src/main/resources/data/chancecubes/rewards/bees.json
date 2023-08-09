@@ -1,0 +1,16 @@
+{
+  "chancecubes:bees": {
+    "chance": 10,
+    "Command": [
+      {
+        "command": "/summon bee ~ ~ ~ {AngerTime:19980,AngryAt:%pencuuid}",
+        "copies": 10
+      }
+    ],
+    "Message": [
+      {
+        "message": "NOT THE BEES!"
+      }
+    ]
+  }
+}
